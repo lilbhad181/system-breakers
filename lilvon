@@ -1,0 +1,95 @@
+
+import pygame
+import random
+
+# Initialize Pygame
+pygame.init()
+
+# Screen setup
+WIDTH, HEIGHT = 800, 600
+screen = pygame.display.set_mode((WIDTH, HEIGHT))
+pygame.display.set_caption("System Breakers")
+
+# Colors
+WHITE = (255, 255, 255)
+BLACK = (0, 0, 0)
+RED   = (200, 0, 0)
+BLUE  = (0, 0, 200)
+
+# Hero class
+class Hero:
+    def __init__(self, name, hp, attack, energy):
+        self.name = name
+        self.hp = hp
+        self.attack = attack
+        self.energy = energy
+
+    def is_alive(self):
+        return self.hp > 0
+
+    def attack_enemy(self, enemy):
+        damage = random.randint(self.attack - 2, self.attack + 2)
+        enemy.hp -= damage
+        print(f"{self.name} attacks {enemy.name} for {damage} damage!")
+
+# Enemy (System) class
+class SystemEnemy:
+    def __init__(self, name, hp, attack):
+        self.name = name
+        self.hp = hp
+        self.attack = attack
+
+    def is_alive(self):
+        return self.hp > 0
+
+    def attack_hero(self, hero):
+        damage = random.randint(self.attack - 2, self.attack + 2)
+        hero.hp -= damage
+        print(f"{self.name} strikes {hero.name} for {damage} damage!")
+
+# Example heroes
+heroes = [
+    Hero("Naruto", 100, 15, 50),
+    Hero("Tanjiro", 90, 14, 40),
+    Hero("Goku", 120, 18, 60),
+    Hero("Jin-Woo", 110, 16, 55),
+]
+
+# System enemy
+system_boss = SystemEnemy("The System", 300, 20)
+
+# Game loop
+running = True
+clock = pygame.time.Clock()
+
+while running:
+    screen.fill(WHITE)
+
+    # Event handling
+    for event in pygame.event.get():
+        if event.type == pygame.QUIT:
+            running = False
+
+    # Simple battle simulation
+    if heroes and system_boss.is_alive():
+        attacker = random.choice(heroes)
+        attacker.attack_enemy(system_boss)
+
+        if system_boss.is_alive():
+            target = random.choice(heroes)
+            system_boss.attack_hero(target)
+            if not target.is_alive():
+                print(f"{target.name} has fallen!")
+                heroes.remove(target)
+        else:
+            print("Heroes defeated The System!")
+            running = False
+
+    elif not heroes:
+        print("The System has won...")
+        running = False
+
+    pygame.display.flip()
+    clock.tick(1)  # Slow down loop for readability
+
+pygame.quit()Added first battle prototype”).
